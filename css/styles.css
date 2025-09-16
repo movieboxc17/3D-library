@@ -49,18 +49,22 @@ a#download-link{display:inline-block;padding:8px 12px;background:var(--accent);c
 
 /* small devices in landscape: keep sidebar visible like a dock */
 @media(max-width:900px) and (orientation:landscape){
-	#sidebar{transform:translateX(0%);position:relative;box-shadow:none}
+	/* dock the sidebar but keep it as a fixed panel so it can scroll independently */
+	#sidebar{transform:translateX(0%);position:fixed;left:0;top:0;bottom:0;height:100vh;box-shadow:0 2px 12px rgba(0,0,0,0.5);overflow:auto;-webkit-overflow-scrolling:touch}
+	#sidebar.open{transform:translateX(0%)}
 	#sidebar-toggle{display:none}
 	#app{overflow:visible}
-	#viewer{margin-left:320px}
+	/* don't push the viewer — keep it usable under the sidebar or use overlay */
+	#viewer{margin-left:0}
 }
 
 /* alternate rule: devices with small height (landscape on tablets) */
 @media (max-height:520px) and (orientation:landscape){
-	#sidebar{transform:translateX(0%);position:relative;box-shadow:none}
+	#sidebar{transform:translateX(0%);position:fixed;left:0;top:0;bottom:0;height:100vh;box-shadow:0 2px 12px rgba(0,0,0,0.5);overflow:auto;-webkit-overflow-scrolling:touch}
+	#sidebar.open{transform:translateX(0%)}
 	#sidebar-toggle{display:none}
 	#app{overflow:visible}
-	#viewer{margin-left:320px}
+	#viewer{margin-left:0}
 }
 
 @media(pointer:coarse){
