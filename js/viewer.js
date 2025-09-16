@@ -85,14 +85,38 @@ function updateSidebarState(){
   const shortSide = Math.min(window.innerWidth, window.innerHeight);
   const isSmall = shortSide <= 900;
   const isLandscape = window.innerWidth > window.innerHeight;
+  // detect iPad specifically (modern iPadOS reports MacIntel + touch points)
+  const isIpad = (()=>{
+    const ua = navigator.userAgent || '';
+    // iPadOS 13+ may report MacIntel but has touch points
+    if(/iPad/.test(ua)) return true;
+    if(navigator.platform === 'MacIntel' && navigator.maxTouchPoints && navigator.maxTouchPoints > 1) return true;
+    return false;
+  })();
+
   if(isSmall && isLandscape && isTouch){
-    // dock sidebar visible
-    sidebar.classList.add('open');
+    // For iPad prefer an overlay that can be closed to reveal the viewer.
+    if(isIpad){
+      sidebar.classList.add('overlay');
+      sidebar.classList.remove('docked');
+      // make it open by default but overlay so user can close
+      sidebar.classList.add('open');
+      injectSidebarClose();
+      if(sidebarToggle) sidebarToggle.style.display = 'none';
+    }else{
+      // other small touch devices: keep a docked sidebar but don't let it cover too much
+      sidebar.classList.add('docked');
+      sidebar.classList.remove('overlay');
+      sidebar.classList.add('open');
+      if(sidebarToggle) sidebarToggle.style.display = 'none';
+    }
     document.documentElement.classList.remove('sidebar-open');
-    if(sidebarToggle) sidebarToggle.style.display = 'none';
   }else{
+    // desktop or portrait: remove forced overlay/docked modes and show toggle
+    sidebar.classList.remove('overlay');
+    sidebar.classList.remove('docked');
     if(sidebarToggle) sidebarToggle.style.display = '';
-    // don't force close here - keep user's choice
+    // keep user's choice for open/close state
   }
 }
 
@@ -109,6 +133,25 @@ function updateVH(){
 window.addEventListener('resize', updateVH);
 window.addEventListener('orientationchange', updateVH);
 updateVH();
+
+// Inject a close button into the sidebar for overlay mode (idempotent)
+function injectSidebarClose(){
+  if(!sidebar) return;
+  // if already has a close button, keep existing
+  if(sidebar.querySelector('.close-btn')) return;
+  const btn = document.createElement('button');
+  btn.className = 'close-btn';
+  btn.title = 'Close';
+  btn.innerHTML = '✕';
+  btn.onclick = ()=>{
+    sidebar.classList.remove('open');
+    // small delay to ensure visual update
+    setTimeout(()=>{
+      sidebar.classList.remove('overlay');
+    }, 350);
+  };
+  sidebar.appendChild(btn);
+}
 
 function animate(){
   requestAnimationFrame(animate);
