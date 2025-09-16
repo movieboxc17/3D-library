@@ -64,9 +64,13 @@ function init(){
 const sidebarToggle = document.getElementById('sidebar-toggle');
 const sidebar = document.getElementById('sidebar');
 if(sidebarToggle && sidebar){
-  sidebarToggle.onclick = ()=>{ sidebar.style.transform = sidebar.style.transform === 'translateX(0%)' ? 'translateX(-100%)' : 'translateX(0%)'; };
+  sidebarToggle.onclick = ()=>{
+    const open = sidebar.classList.toggle('open');
+    if(open) document.documentElement.classList.add('sidebar-open');
+    else document.documentElement.classList.remove('sidebar-open');
+  };
   // ensure initial hidden state on small screens
-  if(window.innerWidth <= 900) sidebar.style.transform = 'translateX(-100%)';
+  if(window.innerWidth <= 900) sidebar.classList.remove('open');
 }
 
 function onWindowResize(){
@@ -297,7 +301,10 @@ function renderModelList(list){
     const sizeSpan = document.createElement('span');
     sizeSpan.textContent = item.size ? item.size : '';
     div.appendChild(sizeSpan);
-    div.addEventListener('click', ()=> loadModel(item.url, item.name));
+    div.addEventListener('click', ()=>{
+      loadModel(item.url, item.name);
+      if(window.innerWidth <= 900 && sidebar) { sidebar.classList.remove('open'); document.documentElement.classList.remove('sidebar-open'); }
+    });
     listEl.appendChild(div);
   });
 }
