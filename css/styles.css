@@ -37,9 +37,11 @@ a#download-link{display:inline-block;padding:8px 12px;background:var(--accent);c
 #sidebar{transition:transform .22s ease}
 
 @media(max-width:900px){
-	#sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%);width:82%;max-width:360px;z-index:40;padding:16px}
+	#sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%);width:82%;max-width:360px;z-index:40;padding:16px;overflow:auto;-webkit-overflow-scrolling:touch}
+	#sidebar.open{transform:translateX(0%)}
 	#sidebar-toggle{display:block}
-	#app{overflow:hidden}
+	/* don't prevent page scroll by default; only when sidebar open */
+	#app.sidebar-open{overflow:hidden}
 	#viewer{margin-left:0}
 	#controls-panel{gap:10px}
 	#controls-panel button{padding:12px 14px;font-size:16px}
