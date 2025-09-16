@@ -29,6 +29,10 @@ function init(){
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
+  // touch-friendly tuning
+  controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
+  controls.rotateSpeed = 0.6;
+  controls.zoomSpeed = 0.8;
   // create an orthographic camera for ortho toggle
   const aspect = container.clientWidth / container.clientHeight;
   const frustumSize = 400;
@@ -54,6 +58,15 @@ function init(){
   window.addEventListener('resize', onWindowResize);
 
   animate();
+}
+
+// Mobile sidebar toggle
+const sidebarToggle = document.getElementById('sidebar-toggle');
+const sidebar = document.getElementById('sidebar');
+if(sidebarToggle && sidebar){
+  sidebarToggle.onclick = ()=>{ sidebar.style.transform = sidebar.style.transform === 'translateX(0%)' ? 'translateX(-100%)' : 'translateX(0%)'; };
+  // ensure initial hidden state on small screens
+  if(window.innerWidth <= 900) sidebar.style.transform = 'translateX(-100%)';
 }
 
 function onWindowResize(){
