@@ -79,6 +79,25 @@ function onWindowResize(){
   renderer.setSize(container.clientWidth, container.clientHeight);
 }
 
+function updateSidebarState(){
+  const isSmall = window.innerWidth <= 900;
+  const isLandscape = window.innerWidth > window.innerHeight;
+  if(isSmall && isLandscape){
+    // dock sidebar visible
+    sidebar.classList.add('open');
+    document.documentElement.classList.remove('sidebar-open');
+    if(sidebarToggle) sidebarToggle.style.display = 'none';
+  }else{
+    if(sidebarToggle) sidebarToggle.style.display = '';
+    // don't force close here - keep user's choice
+  }
+}
+
+window.addEventListener('resize', updateSidebarState);
+window.addEventListener('orientationchange', updateSidebarState);
+// run initially
+updateSidebarState();
+
 function animate(){
   requestAnimationFrame(animate);
   controls.update();
