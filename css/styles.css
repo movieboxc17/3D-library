@@ -47,25 +47,54 @@ a#download-link{display:inline-block;padding:8px 12px;background:var(--accent);c
 	#controls-panel button{padding:12px 14px;font-size:16px}
 }
 
-/* small devices in landscape: keep sidebar visible like a dock */
+/* small devices in landscape: prefer a scrollable overlay or dock depending on device capability
+   - Use --vh (set from JS) and safe-area-inset to ensure correct height on iOS Safari
+   - For iPad-like devices we use an overlay panel with an explicit close button so the content can scroll
+   - For other small landscape devices we keep a docked panel but limit max-width so it doesn't cover everything */
 @media(max-width:900px) and (orientation:landscape){
-	/* dock the sidebar but keep it as a fixed panel so it can scroll independently */
-		#sidebar{transform:translateX(0%);position:fixed;left:0;top:0;bottom:0;height:calc(var(--vh,1vh) * 100);box-shadow:0 2px 12px rgba(0,0,0,0.5);overflow:auto;-webkit-overflow-scrolling:touch}
+	#sidebar{
+		transform:translateX(0%);
+		position:fixed;
+		left:0;top:0;
+		/* Use safe area and calc'd viewport height to avoid iOS 100vh bugs */
+		bottom:env(safe-area-inset-bottom, 0);
+		height:calc(var(--vh,1vh) * 100 - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0));
+		box-shadow:0 2px 12px rgba(0,0,0,0.5);
+		overflow:auto;
+		-webkit-overflow-scrolling:touch;
+		background:linear-gradient(180deg, rgba(15,23,32,0.98), rgba(10,14,20,0.98));
+		padding-top:18px;
+		z-index:60;
+	}
+	/* On narrow landscape we'll treat the sidebar as an overlay that can be closed */
+	#sidebar.overlay{left:0;right:auto;width:360px;max-width:62vw;border-right:1px solid rgba(255,255,255,0.03);}
+	/* dock fallback: keeps a slim sidebar that doesn't cover too much */
+	#sidebar.docked{width:320px;max-width:40vw}
 	#sidebar.open{transform:translateX(0%)}
 	#sidebar-toggle{display:none}
 	#app{overflow:visible}
-	/* don't push the viewer — keep it usable under the sidebar or use overlay */
 	#viewer{margin-left:0}
 }
 
 /* alternate rule: devices with small height (landscape on tablets) */
 @media (max-height:520px) and (orientation:landscape){
-		#sidebar{transform:translateX(0%);position:fixed;left:0;top:0;bottom:0;height:calc(var(--vh,1vh) * 100);box-shadow:0 2px 12px rgba(0,0,0,0.5);overflow:auto;-webkit-overflow-scrolling:touch}
+	#sidebar{transform:translateX(0%);position:fixed;left:0;top:0;bottom:0;height:calc(var(--vh,1vh) * 100 - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0));box-shadow:0 2px 12px rgba(0,0,0,0.5);overflow:auto;-webkit-overflow-scrolling:touch}
+	#sidebar.overlay{width:380px;max-width:66vw}
+	#sidebar.docked{width:320px;max-width:40vw}
 	#sidebar.open{transform:translateX(0%)}
 	#sidebar-toggle{display:none}
 	#app{overflow:visible}
 	#viewer{margin-left:0}
 }
+
+/* Close button for overlay mode */
+#sidebar .close-btn{position:absolute;right:8px;top:8px;border:none;background:transparent;color:inherit;padding:8px;border-radius:6px;cursor:pointer;font-size:16px}
+
+/* make scrollbars visible and touch friendly on iOS */
+#sidebar::-webkit-scrollbar{width:12px}
+#sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:8px;border:3px solid transparent;background-clip:padding-box}
+#sidebar::-webkit-scrollbar-track{background:transparent}
+
 
 @media(pointer:coarse){
 	#controls-panel button{padding:14px 16px}
