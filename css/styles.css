@@ -1,0 +1,32 @@
+:root{--bg:#111;--panel:#0f1720;--muted:#9aa4b2;--accent:#4f46e5}
+*{box-sizing:border-box}
+html,body,#app{height:100%;margin:0;font-family:Inter,Segoe UI,system-ui,Arial}
+#viewer{background:#2b2b2b}
+body{background:linear-gradient(180deg,#071123, #071020);color:#e6eef6}
+#app{display:flex}
+#sidebar{width:320px;padding:18px;background:var(--panel);border-right:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column}
+#model-list{flex:1;overflow:auto;margin-top:12px}
+.model-item{padding:8px 10px;border-radius:6px;margin:6px 0;background:rgba(255,255,255,0.02);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.model-item:hover{background:rgba(255,255,255,0.04)}
+#viewer-wrap{flex:1;display:flex;flex-direction:column}
+#viewer{flex:1}
+#cam-presets button{margin-right:6px;padding:6px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:inherit;cursor:pointer}
+#cam-presets button:hover{background:rgba(255,255,255,0.04)}
+#viewer{flex:1;position:relative}
+#viewer .toolbar{position:absolute;left:12px;top:12px;display:flex;gap:6px;z-index:20}
+#controls-panel select{background:transparent;color:inherit;border:1px solid rgba(255,255,255,0.04);padding:4px;border-radius:4px}
+#viewer .overlay-ui{position:absolute;right:12px;top:12px;color:#cbd5e1}
+#status{padding:8px 12px;background:rgba(0,0,0,0.25);font-size:13px;color:var(--muted)}
+#upload-area{margin-top:12px;padding:12px;border:2px dashed rgba(255,255,255,0.03);text-align:center;border-radius:6px;color:var(--muted)}
+#actions{margin-top:10px}
+a#download-link{display:inline-block;padding:8px 12px;background:var(--accent);color:white;border-radius:6px;text-decoration:none}
+.hint{font-size:12px;color:var(--muted);margin-top:8px}
+
+@media(max-width:800px){aside#sidebar{width:100%;position:relative}#app{flex-direction:column}#viewer-wrap{height:60vh}}
+#status{padding:8px 12px;background:rgba(0,0,0,0.18);font-size:13px;color:var(--muted)}
+
+/* controls panel layout */
+#controls-panel{display:flex;flex-direction:column;gap:8px}
+#controls-panel label{display:flex;align-items:center;gap:8px}
+#controls-panel button{padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.02);cursor:pointer}
+#controls-panel button:hover{background:rgba(255,255,255,0.04)}
