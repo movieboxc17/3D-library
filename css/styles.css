@@ -30,3 +30,22 @@ a#download-link{display:inline-block;padding:8px 12px;background:var(--accent);c
 #controls-panel label{display:flex;align-items:center;gap:8px}
 #controls-panel button{padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.02);cursor:pointer}
 #controls-panel button:hover{background:rgba(255,255,255,0.04)}
+
+/* mobile / touch improvements */
+#sidebar-toggle{display:none;position:fixed;left:12px;top:12px;z-index:50;padding:10px 12px;border-radius:6px;border:none;background:var(--panel);color:inherit;box-shadow:0 2px 8px rgba(0,0,0,0.4);cursor:pointer}
+#sidebar.show{transform:none}
+#sidebar{transition:transform .22s ease}
+
+@media(max-width:900px){
+	#sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%);width:82%;max-width:360px;z-index:40;padding:16px}
+	#sidebar-toggle{display:block}
+	#app{overflow:hidden}
+	#viewer{margin-left:0}
+	#controls-panel{gap:10px}
+	#controls-panel button{padding:12px 14px;font-size:16px}
+}
+
+@media(pointer:coarse){
+	#controls-panel button{padding:14px 16px}
+	.model-item{padding:12px 14px}
+}
