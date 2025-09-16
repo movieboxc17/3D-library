@@ -80,9 +80,12 @@ function onWindowResize(){
 }
 
 function updateSidebarState(){
-  const isSmall = window.innerWidth <= 900;
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  // treat device as small if the shorter side <= 900 (handles tablets in landscape)
+  const shortSide = Math.min(window.innerWidth, window.innerHeight);
+  const isSmall = shortSide <= 900;
   const isLandscape = window.innerWidth > window.innerHeight;
-  if(isSmall && isLandscape){
+  if(isSmall && isLandscape && isTouch){
     // dock sidebar visible
     sidebar.classList.add('open');
     document.documentElement.classList.remove('sidebar-open');
