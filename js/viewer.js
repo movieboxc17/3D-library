@@ -101,6 +101,15 @@ window.addEventListener('orientationchange', updateSidebarState);
 // run initially
 updateSidebarState();
 
+// Fix iOS/vh issues: set a CSS var --vh to the real inner height fraction
+function updateVH(){
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+window.addEventListener('resize', updateVH);
+window.addEventListener('orientationchange', updateVH);
+updateVH();
+
 function animate(){
   requestAnimationFrame(animate);
   controls.update();
