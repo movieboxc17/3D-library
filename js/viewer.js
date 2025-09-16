@@ -325,7 +325,13 @@ function renderModelList(list){
     div.appendChild(sizeSpan);
     div.addEventListener('click', ()=>{
       loadModel(item.url, item.name);
-      if(window.innerWidth <= 900 && sidebar) { sidebar.classList.remove('open'); document.documentElement.classList.remove('sidebar-open'); }
+      // only auto-close in portrait (not docked landscape)
+      const shortSide = Math.min(window.innerWidth, window.innerHeight);
+      const isPortrait = window.innerHeight >= window.innerWidth;
+      if(shortSide <= 900 && isPortrait && sidebar){
+        sidebar.classList.remove('open');
+        document.documentElement.classList.remove('sidebar-open');
+      }
     });
     listEl.appendChild(div);
   });
