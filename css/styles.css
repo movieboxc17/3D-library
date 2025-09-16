@@ -55,6 +55,14 @@ a#download-link{display:inline-block;padding:8px 12px;background:var(--accent);c
 	#viewer{margin-left:320px}
 }
 
+/* alternate rule: devices with small height (landscape on tablets) */
+@media (max-height:520px) and (orientation:landscape){
+	#sidebar{transform:translateX(0%);position:relative;box-shadow:none}
+	#sidebar-toggle{display:none}
+	#app{overflow:visible}
+	#viewer{margin-left:320px}
+}
+
 @media(pointer:coarse){
 	#controls-panel button{padding:14px 16px}
 	.model-item{padding:12px 14px}
