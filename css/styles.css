@@ -51,8 +51,16 @@ html,body,#app{height:100%;margin:0;font-family:Inter,Segoe UI,system-ui,Arial;b
 }
 
 /* When app is in tablet-mode (iPad), hide the desktop sidebar and toggle controls */
-#app.tablet-mode #sidebar{display:none !important}
-#app.tablet-mode #sidebar-toggle{display:none !important}
+#app.tablet-mode #sidebar,
+#app.tablet-mode #sidebar-toggle,
+#app.tablet-mode #controls-panel,
+#app.tablet-mode #cam-presets,
+#app.tablet-mode #actions {
+  display: none !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
 
 @media(pointer:coarse){
   #controls-panel button{padding:14px 16px}
