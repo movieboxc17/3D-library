@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 
 const container = document.getElementById('viewer');
+const app = document.getElementById('app');
 const status = document.getElementById('status');
 const listEl = document.getElementById('model-list');
 const downloadLink = document.getElementById('download-link');
@@ -57,6 +58,53 @@ function init(){
 
   window.addEventListener('resize', onWindowResize);
 
+  // Setup touch gesture handlers now that controls and camera exist
+  (function(){
+    let lastTouchDist = null;
+    container.addEventListener('touchmove', function(e){
+      try{
+        if(e.touches.length === 2){
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if(lastTouchDist){
+            const delta = dist - lastTouchDist;
+            if(controls && typeof controls.dollyIn === 'function' && typeof controls.dollyOut === 'function'){
+              if(delta > 0) controls.dollyOut(1.03);
+              else controls.dollyIn(1.03);
+              controls.update();
+            }else if(camera && controls){
+              const dir = new THREE.Vector3().subVectors(camera.position, controls.target);
+              const factor = delta > 0 ? 1.03 : 0.97;
+              dir.multiplyScalar(factor);
+              camera.position.copy(controls.target).add(dir);
+              if(typeof camera.updateProjectionMatrix === 'function') camera.updateProjectionMatrix();
+              controls.update();
+            }
+          }
+          lastTouchDist = dist;
+          e.preventDefault();
+        }
+      }catch(err){ console.warn('Touch move handler error:', err); }
+    }, {passive:false});
+    container.addEventListener('touchend', function(e){ lastTouchDist = null; });
+
+    let touchStartX = null;
+    container.addEventListener('touchstart', function(e){ if(e.touches.length === 1) touchStartX = e.touches[0].clientX; }, {passive:true});
+    container.addEventListener('touchend', function(e){
+      try{
+        if(touchStartX !== null && e.changedTouches.length === 1){
+          const dx = e.changedTouches[0].clientX - touchStartX;
+          if(Math.abs(dx) > 80 && sidebar && sidebar.classList.contains('overlay')){
+            if(dx > 0) sidebar.classList.add('open');
+            else sidebar.classList.remove('open');
+          }
+        }
+      }catch(err){ console.warn('Touch end handler error:', err); }
+      touchStartX = null;
+    }, {passive:true});
+  })();
+
   animate();
 }
 
@@ -66,8 +114,8 @@ const sidebar = document.getElementById('sidebar');
 if(sidebarToggle && sidebar){
   sidebarToggle.onclick = ()=>{
     const open = sidebar.classList.toggle('open');
-    if(open) document.documentElement.classList.add('sidebar-open');
-    else document.documentElement.classList.remove('sidebar-open');
+    if(open) app && app.classList.add('sidebar-open');
+    else app && app.classList.remove('sidebar-open');
   };
   // ensure initial hidden state on small screens
   if(window.innerWidth <= 900) sidebar.classList.remove('open');
@@ -115,7 +163,7 @@ function updateSidebarState(){
       sidebar.classList.add('open');
       if(sidebarToggle) sidebarToggle.style.display = 'none';
     }
-    document.documentElement.classList.remove('sidebar-open');
+  app && app.classList.remove('sidebar-open');
   }else{
     // desktop or portrait: remove forced overlay/docked modes and show toggle
     sidebar.classList.remove('overlay');
@@ -397,7 +445,7 @@ function renderModelList(list){
       const isPortrait = window.innerHeight >= window.innerWidth;
       if(shortSide <= 900 && isPortrait && sidebar){
         sidebar.classList.remove('open');
-        document.documentElement.classList.remove('sidebar-open');
+      app && app.classList.remove('sidebar-open');
       }
     });
     listEl.appendChild(div);
@@ -434,35 +482,58 @@ function autoScaleToUnit(root){
 init();
 fetchModelsList();
 
-  // Add pinch-to-zoom and swipe for iPad/touch devices
-  let lastTouchDist = null;
-  container.addEventListener('touchmove', function(e){
-    if(e.touches.length === 2){
-      const dx = e.touches[0].clientX - e.touches[1].clientX;
-      const dy = e.touches[0].clientY - e.touches[1].clientY;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      if(lastTouchDist){
-        const delta = dist - lastTouchDist;
-        controls.dollyIn(delta > 0 ? 1.03 : 0.97);
-        controls.update();
+  // Add pinch-to-zoom and swipe for iPad/touch devices (robust)
+  (function(){
+    let lastTouchDist = null;
+    container.addEventListener('touchmove', function(e){
+      try{
+        if(e.touches.length === 2){
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if(lastTouchDist){
+            const delta = dist - lastTouchDist; // positive = fingers moved apart
+            // Prefer OrbitControls dolly methods if available, otherwise apply camera fallback
+            if(controls && typeof controls.dollyIn === 'function' && typeof controls.dollyOut === 'function'){
+              if(delta > 0) controls.dollyOut(1.03);
+              else controls.dollyIn(1.03);
+              controls.update();
+            }else if(camera && controls){
+              // Fallback: move camera toward/away from controls.target
+              const dir = new THREE.Vector3().subVectors(camera.position, controls.target);
+              const factor = delta > 0 ? 1.03 : 0.97;
+              dir.multiplyScalar(factor);
+              camera.position.copy(controls.target).add(dir);
+              if(typeof camera.updateProjectionMatrix === 'function') camera.updateProjectionMatrix();
+              controls.update();
+            }
+          }
+          lastTouchDist = dist;
+          // prevent default to avoid page pinch-zoom on some browsers
+          e.preventDefault();
+        }
+      }catch(err){
+        // swallow errors to avoid breaking the app on touch devices
+        console.warn('Touch move handler error:', err);
       }
-      lastTouchDist = dist;
-    }
-  }, {passive:false});
-  container.addEventListener('touchend', function(e){ lastTouchDist = null; });
+    }, {passive:false});
+    container.addEventListener('touchend', function(e){ lastTouchDist = null; });
 
-  // Swipe left/right to open/close sidebar in overlay mode
-  let touchStartX = null;
-  container.addEventListener('touchstart', function(e){
-    if(e.touches.length === 1) touchStartX = e.touches[0].clientX;
-  }, {passive:true});
-  container.addEventListener('touchend', function(e){
-    if(touchStartX !== null && e.changedTouches.length === 1){
-      const dx = e.changedTouches[0].clientX - touchStartX;
-      if(Math.abs(dx) > 80){
-        if(dx > 0 && sidebar && sidebar.classList.contains('overlay')) sidebar.classList.add('open');
-        if(dx < 0 && sidebar && sidebar.classList.contains('overlay')) sidebar.classList.remove('open');
-      }
-    }
-    touchStartX = null;
-  }, {passive:true});
+    // Swipe left/right to open/close sidebar in overlay mode
+    let touchStartX = null;
+    container.addEventListener('touchstart', function(e){
+      if(e.touches.length === 1) touchStartX = e.touches[0].clientX;
+    }, {passive:true});
+    container.addEventListener('touchend', function(e){
+      try{
+        if(touchStartX !== null && e.changedTouches.length === 1){
+          const dx = e.changedTouches[0].clientX - touchStartX;
+          if(Math.abs(dx) > 80 && sidebar && sidebar.classList.contains('overlay')){
+            if(dx > 0) sidebar.classList.add('open');
+            else sidebar.classList.remove('open');
+          }
+        }
+      }catch(err){ console.warn('Touch end handler error:', err); }
+      touchStartX = null;
+    }, {passive:true});
+  })();
