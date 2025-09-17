@@ -71,6 +71,11 @@ if(sidebarToggle && sidebar){
   };
   // ensure initial hidden state on small screens
   if(window.innerWidth <= 900) sidebar.classList.remove('open');
+  // Accessibility: allow keyboard and touch
+  sidebarToggle.setAttribute('tabindex', '0');
+  sidebarToggle.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' ') sidebarToggle.click();
+  });
 }
 
 function onWindowResize(){
@@ -152,6 +157,16 @@ function injectSidebarClose(){
   };
   sidebar.appendChild(btn);
 }
+
+// Close sidebar on outside tap (overlay mode)
+document.addEventListener('touchstart', function(e){
+  if(sidebar.classList.contains('overlay') && sidebar.classList.contains('open')){
+    if(!sidebar.contains(e.target)){
+      sidebar.classList.remove('open');
+      setTimeout(()=>sidebar.classList.remove('overlay'), 350);
+    }
+  }
+}, {passive:true});
 
 function animate(){
   requestAnimationFrame(animate);
@@ -418,3 +433,36 @@ function autoScaleToUnit(root){
 
 init();
 fetchModelsList();
+
+  // Add pinch-to-zoom and swipe for iPad/touch devices
+  let lastTouchDist = null;
+  container.addEventListener('touchmove', function(e){
+    if(e.touches.length === 2){
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if(lastTouchDist){
+        const delta = dist - lastTouchDist;
+        controls.dollyIn(delta > 0 ? 1.03 : 0.97);
+        controls.update();
+      }
+      lastTouchDist = dist;
+    }
+  }, {passive:false});
+  container.addEventListener('touchend', function(e){ lastTouchDist = null; });
+
+  // Swipe left/right to open/close sidebar in overlay mode
+  let touchStartX = null;
+  container.addEventListener('touchstart', function(e){
+    if(e.touches.length === 1) touchStartX = e.touches[0].clientX;
+  }, {passive:true});
+  container.addEventListener('touchend', function(e){
+    if(touchStartX !== null && e.changedTouches.length === 1){
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if(Math.abs(dx) > 80){
+        if(dx > 0 && sidebar && sidebar.classList.contains('overlay')) sidebar.classList.add('open');
+        if(dx < 0 && sidebar && sidebar.classList.contains('overlay')) sidebar.classList.remove('open');
+      }
+    }
+    touchStartX = null;
+  }, {passive:true});
