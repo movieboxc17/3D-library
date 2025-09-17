@@ -225,6 +225,7 @@ if(sidebarToggle && sidebar){
 
 // Wire tablet buttons
 function wireTabletButtons(){
+  const tbOpenModels = document.getElementById('tb-open-models');
   const tbFront = document.getElementById('tb-cam-front');
   const tbTop = document.getElementById('tb-cam-top');
   const tbRight = document.getElementById('tb-cam-right');
@@ -233,7 +234,10 @@ function wireTabletButtons(){
   const tbShading = document.getElementById('tb-shading');
   const tbGrid = document.getElementById('tb-grid-toggle');
   const tbDownload = document.getElementById('tb-download');
+  const tbResetCamera = document.getElementById('tb-reset-camera');
+  const tbFrameModel = document.getElementById('tb-frame-model');
 
+  if(tbOpenModels) tbOpenModels.addEventListener('click', ()=> tbModelModal && tbModelModal.setAttribute('aria-hidden','false'));
   if(tbFront) tbFront.addEventListener('click', ()=>{ camera.position.set(0,200,0); controls.target.set(0,0,0); controls.update(); });
   if(tbTop) tbTop.addEventListener('click', ()=>{ camera.position.set(0,400,0); controls.target.set(0,0,0); controls.update(); });
   if(tbRight) tbRight.addEventListener('click', ()=>{ camera.position.set(400,0,0); controls.target.set(0,0,0); controls.update(); });
@@ -249,6 +253,8 @@ function wireTabletButtons(){
   });
   if(tbGrid) tbGrid.addEventListener('click', ()=>{ gridHelper.visible = !gridHelper.visible; });
   if(tbDownload) tbDownload.addEventListener('click', ()=>{ if(downloadLink && downloadLink.href) tbDownload.href = downloadLink.href; });
+  if(tbResetCamera) tbResetCamera.addEventListener('click', ()=>{ camera.position.set(200,200,200); controls.target.set(0,0,0); controls.update(); });
+  if(tbFrameModel) tbFrameModel.addEventListener('click', ()=>{ if(currentModel) fitCameraToObject(currentModel, 1.5); });
 }
 
 // Touch gesture prevention to avoid page pinch zoom on iOS Safari
