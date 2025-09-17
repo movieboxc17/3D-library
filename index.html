@@ -3,8 +3,18 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- iOS/iPad viewport and web app meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="FBX Viewer">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#071123">
     <title>FBX Viewer</title>
     <link rel="stylesheet" href="css/styles.css" />
+    <style>
+      /* Prevent double-tap zoom on iOS */
+      html, body { touch-action: manipulation; }
+    </style>
   </head>
   <body>
     <div id="app">
@@ -52,6 +62,16 @@
   <div id="debug" style="position:fixed;right:12px;bottom:12px;background:rgba(0,0,0,0.35);padding:8px;border-radius:6px;font-size:12px;color:#cbd5e1;max-width:240px"></div>
       </main>
     </div>
+
+  <!-- iOS/iPad viewport height fix -->
+  <script>
+    function setVhVar() {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    window.addEventListener('resize', setVhVar);
+    setVhVar();
+  </script>
 
   <!-- Use ESM modules (recommended). Viewer will import three + examples as modules -->
   <script type="module" src="js/viewer.js"></script>
