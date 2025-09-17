@@ -2,20 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- iOS/iPad viewport and web app meta tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="FBX Viewer">
-    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#071123">
     <title>FBX Viewer</title>
     <link rel="stylesheet" href="css/styles.css" />
-    <style>
-      /* Prevent double-tap zoom on iOS */
-      html, body { touch-action: manipulation; }
-    </style>
-    <meta name="mobile-web-app-capable" content="yes">
+    <style>html,body{height:100%;margin:0}</style>
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://esm.sh/three@0.156.0",
+        "three/": "https://esm.sh/three@0.156.0/"
+      }
+    }
+    </script>
   </head>
   <body>
     <div id="app">
@@ -26,22 +26,17 @@
         <div id="controls-panel">
           <h3>View Controls</h3>
           <label>Light intensity: <input id="light-range" type="range" min="0" max="2" step="0.05" value="1"></label>
-          <br>
           <label><input id="wire-toggle" type="checkbox"> Wireframe</label>
-          <br>
           <label><input id="align-ground" type="checkbox" checked> Align to ground</label>
-          <br>
           <label>Shading:
             <select id="shading-mode">
               <option value="lit">Lit</option>
               <option value="solid">Solid</option>
             </select>
           </label>
-          <br>
           <label><input id="show-grid" type="checkbox" checked> Show grid</label>
-          <br>
           <label><input id="ortho-toggle" type="checkbox"> Orthographic</label>
-          <div id="cam-presets" style="margin-top:8px">
+          <div id="cam-presets">
             <button id="cam-front">Front</button>
             <button id="cam-top">Top</button>
             <button id="cam-right">Right</button>
@@ -54,13 +49,14 @@
         <div id="actions">
           <a id="download-link" href="#" download>Download current</a>
         </div>
-        <p class="hint">Add FBX files to the <code>models/</code> folder and run the generator or push to GitHub to serve them.</p>
+        <p class="hint">Add FBX files to the <code>models/</code> folder and run the generator.</p>
       </aside>
 
       <main id="viewer-wrap">
         <div id="viewer"></div>
-  <div id="status"></div>
-  <div id="debug" style="position:fixed;right:12px;bottom:12px;background:rgba(0,0,0,0.35);padding:8px;border-radius:6px;font-size:12px;color:#cbd5e1;max-width:240px"></div>
+        <div id="status" role="status"></div>
+        <div id="debug" aria-hidden="true"></div>
+
         <!-- Tablet / iPad specific floating UI (shown only on tablet-mode) -->
         <div id="tablet-ui" aria-hidden="true">
           <div class="tablet-row">
@@ -79,25 +75,6 @@
       </main>
     </div>
 
-  <!-- iOS/iPad viewport height fix -->
-  <script>
-    function setVhVar() {
-      let vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-    window.addEventListener('resize', setVhVar);
-    setVhVar();
-  </script>
-
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://esm.sh/three@0.156.0",
-      "three/": "https://esm.sh/three@0.156.0/"
-    }
-  }
-  </script>
-  <!-- Use ESM modules (recommended). Viewer will import three + examples as modules -->
-  <script type="module" src="js/viewer.js"></script>
+    <script type="module" src="js/viewer.js"></script>
   </body>
 </html>
