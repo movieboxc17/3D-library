@@ -13,6 +13,8 @@ body{background:linear-gradient(180deg,#071123, #071020);color:#e6eef6}
 #cam-presets button{margin-right:6px;padding:6px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:inherit;cursor:pointer}
 #cam-presets button:hover{background:rgba(255,255,255,0.04)}
 #viewer{flex:1;position:relative}
+/* Ensure viewer uses the computed --vh to avoid iOS 100vh issues */
+#viewer{height:calc(var(--vh,1vh) * 100);min-height:200px}
 #viewer .toolbar{position:absolute;left:12px;top:12px;display:flex;gap:6px;z-index:20}
 #controls-panel select{background:transparent;color:inherit;border:1px solid rgba(255,255,255,0.04);padding:4px;border-radius:4px}
 #viewer .overlay-ui{position:absolute;right:12px;top:12px;color:#cbd5e1}
@@ -89,6 +91,9 @@ a#download-link{display:inline-block;padding:8px 12px;background:var(--accent);c
 
 /* Close button for overlay mode */
 #sidebar .close-btn{position:absolute;right:8px;top:8px;border:none;background:transparent;color:inherit;padding:8px;border-radius:6px;cursor:pointer;font-size:16px}
+
+/* small top handle for overlay sheet on iPad */
+.sheet-handle{height:6px;width:48px;background:rgba(255,255,255,0.06);border-radius:6px;margin:8px auto 12px;}
 
 /* make scrollbars visible and touch friendly on iOS */
 #sidebar::-webkit-scrollbar{width:12px}
