@@ -239,6 +239,52 @@ const camTop = document.getElementById('cam-top');
 const camRight = document.getElementById('cam-right');
 const camPersp = document.getElementById('cam-persp');
 
+// Tablet UI elements
+const tabletUI = document.getElementById('tablet-ui');
+const tbCamFront = document.getElementById('tb-cam-front');
+const tbCamTop = document.getElementById('tb-cam-top');
+const tbCamRight = document.getElementById('tb-cam-right');
+const tbCamPersp = document.getElementById('tb-cam-persp');
+const tbWire = document.getElementById('tb-wire-toggle');
+const tbShading = document.getElementById('tb-shading');
+const tbGrid = document.getElementById('tb-grid-toggle');
+const tbDownload = document.getElementById('tb-download');
+
+function isTabletSize(){
+  // consider tablet if short side between 600 and 1100 and has touch
+  const shortSide = Math.min(window.innerWidth, window.innerHeight);
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  return isTouch && shortSide >= 600 && shortSide <= 1100;
+}
+
+function updateUIForDevice(){
+  if(isTabletSize()){
+    app.classList.add('tablet-mode');
+    if(tabletUI) tabletUI.setAttribute('aria-hidden','false');
+    // hide desktop sidebar for tablet overlay
+    if(sidebar) sidebar.classList.add('overlay');
+  }else{
+    app.classList.remove('tablet-mode');
+    if(tabletUI) tabletUI.setAttribute('aria-hidden','true');
+    if(sidebar) sidebar.classList.remove('overlay');
+  }
+}
+
+window.addEventListener('resize', updateUIForDevice);
+window.addEventListener('orientationchange', updateUIForDevice);
+document.addEventListener('DOMContentLoaded', updateUIForDevice);
+
+// Wire tablet buttons to existing handlers (safely)
+function safeClick(el, fn){ if(!el) return; el.addEventListener('click', fn); }
+safeClick(tbCamFront, ()=>{ if(camFront) camFront.click(); else setCameraTo('front'); });
+safeClick(tbCamTop, ()=>{ if(camTop) camTop.click(); else setCameraTo('top'); });
+safeClick(tbCamRight, ()=>{ if(camRight) camRight.click(); else setCameraTo('right'); });
+safeClick(tbCamPersp, ()=>{ if(camPersp) camPersp.click(); else setCameraTo('persp'); });
+safeClick(tbWire, ()=>{ if(wireToggle) wireToggle.click(); else tbWire.setAttribute('aria-pressed', tbWire.getAttribute('aria-pressed') === 'false' ? 'true' : 'false'); });
+safeClick(tbGrid, ()=>{ if(showGrid) showGrid.click(); });
+if(tbShading) tbShading.addEventListener('change', ()=>{ if(shadingSelect) shadingSelect.value = tbShading.value; if(shadingSelect) shadingSelect.dispatchEvent(new Event('change')); });
+if(tbDownload) tbDownload.addEventListener('click', ()=>{ if(downloadLink && downloadLink.href) tbDownload.href = downloadLink.href; });
+
 // Compute bounding box only from visible mesh geometries (more robust for FBX with transforms)
 function computeMeshesBox(root){
   const box = new THREE.Box3();
