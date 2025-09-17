@@ -28,11 +28,34 @@ html,body,#app{height:100%;margin:0;font-family:Inter,Segoe UI,system-ui,Arial;b
 #tablet-ui{display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:220;pointer-events:none}
 #app.tablet-mode #tablet-ui{display:block;pointer-events:auto}
 #tablet-ui .tablet-row{display:flex;gap:8px;justify-content:space-between;margin-bottom:8px}
-#tablet-ui button,#tablet-ui select,#tablet-ui .button{flex:1;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.04);color:inherit;font-size:16px}
+#tablet-ui button,#tablet-ui select,#tablet-ui .button{
+  flex:1;
+  padding:16px 18px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.07);
+  color:inherit;
+  font-size:18px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  transition:background .15s,box-shadow .15s;
+}
 #tablet-ui .button{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+#tablet-ui button.accent{
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  border:1.5px solid var(--accent);
+}
 
 /* Sheet handle */
 .sheet-handle{height:6px;width:48px;background:rgba(255,255,255,0.06);border-radius:6px;margin:8px auto 12px}
+.sheet-handle{
+  height:8px;
+  width:56px;
+  background:rgba(255,255,255,0.13);
+  border-radius:8px;
+  margin:10px auto 16px;
+}
 
 /* Modal for tablet model picker */
 .modal{display:none;position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:300;align-items:center;justify-content:center}
@@ -63,7 +86,7 @@ html,body,#app{height:100%;margin:0;font-family:Inter,Segoe UI,system-ui,Arial;b
 }
 
 @media(pointer:coarse){
-  #controls-panel button{padding:14px 16px}
-  .model-item{padding:12px 14px}
-  #tablet-ui button,#tablet-ui select,#tablet-ui .button{padding:14px 16px;font-size:18px;border-radius:12px}
+  #controls-panel button{padding:16px 18px}
+  .model-item{padding:14px 16px}
+  #tablet-ui button,#tablet-ui select,#tablet-ui .button{padding:18px 20px;font-size:20px;border-radius:16px}
 }
