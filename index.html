@@ -15,6 +15,7 @@
       /* Prevent double-tap zoom on iOS */
       html, body { touch-action: manipulation; }
     </style>
+    <meta name="mobile-web-app-capable" content="yes">
   </head>
   <body>
     <div id="app">
@@ -73,8 +74,6 @@
     setVhVar();
   </script>
 
-  <!-- Use ESM modules (recommended). Viewer will import three + examples as modules -->
-  <script type="module" src="js/viewer.js"></script>
   <script type="importmap">
   {
     "imports": {
@@ -83,5 +82,7 @@
     }
   }
   </script>
+  <!-- Use ESM modules (recommended). Viewer will import three + examples as modules -->
+  <script type="module" src="js/viewer.js"></script>
   </body>
 </html>
