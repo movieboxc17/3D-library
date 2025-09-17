@@ -34,6 +34,13 @@ html,body,#app{height:100%;margin:0;font-family:Inter,Segoe UI,system-ui,Arial;b
 /* Sheet handle */
 .sheet-handle{height:6px;width:48px;background:rgba(255,255,255,0.06);border-radius:6px;margin:8px auto 12px}
 
+/* Modal for tablet model picker */
+.modal{display:none;position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:300;align-items:center;justify-content:center}
+.modal[aria-hidden="false"]{display:flex}
+.modal-content{background:var(--panel);padding:16px;border-radius:10px;max-width:420px;width:90%;color:inherit}
+.modal-content button#modal-close{float:right}
+.modal-content #modal-model-list .model-item{margin:6px 0}
+
 /* Responsive rules */
 @media(max-width:900px){
   #sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-110%);transition:transform .22s ease;z-index:210;width:360px}
@@ -42,6 +49,10 @@ html,body,#app{height:100%;margin:0;font-family:Inter,Segoe UI,system-ui,Arial;b
   #app{overflow:hidden}
   #viewer{height:calc(var(--vh,1vh) * 100)}
 }
+
+/* When app is in tablet-mode (iPad), hide the desktop sidebar and toggle controls */
+#app.tablet-mode #sidebar{display:none !important}
+#app.tablet-mode #sidebar-toggle{display:none !important}
 
 @media(pointer:coarse){
   #controls-panel button{padding:14px 16px}
