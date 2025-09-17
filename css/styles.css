@@ -1,162 +1,50 @@
-:root{--bg:#111;--panel:#0f1720;--muted:#9aa4b2;--accent:#4f46e5}
+:root{--bg:#071123;--panel:#0f1720;--muted:#9aa4b2;--accent:#4f46e5}
 *{box-sizing:border-box}
-html,body,#app{height:100%;margin:0;font-family:Inter,Segoe UI,system-ui,Arial}
-#viewer{background:#2b2b2b}
-body{background:linear-gradient(180deg,#071123, #071020);color:#e6eef6}
-#app{display:flex}
+html,body,#app{height:100%;margin:0;font-family:Inter,Segoe UI,system-ui,Arial;background:linear-gradient(180deg,var(--bg), #071020);color:#e6eef6}
+#app{display:flex;min-height:100vh}
+
+/* Sidebar (desktop) */
 #sidebar{width:320px;padding:18px;background:var(--panel);border-right:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column}
+#sidebar h1{margin:0 0 8px 0;font-size:20px}
 #model-list{flex:1;overflow:auto;margin-top:12px}
-.model-item{padding:8px 10px;border-radius:6px;margin:6px 0;background:rgba(255,255,255,0.02);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-.model-item:hover{background:rgba(255,255,255,0.04)}
-#viewer-wrap{flex:1;display:flex;flex-direction:column}
-#viewer{flex:1}
-#cam-presets button{margin-right:6px;padding:6px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:inherit;cursor:pointer}
-#cam-presets button:hover{background:rgba(255,255,255,0.04)}
-#viewer{flex:1;position:relative}
-/* Ensure viewer uses the computed --vh to avoid iOS 100vh issues */
-#viewer{height:calc(var(--vh,1vh) * 100);min-height:200px}
-#viewer .toolbar{position:absolute;left:12px;top:12px;display:flex;gap:6px;z-index:20}
-#controls-panel select{background:transparent;color:inherit;border:1px solid rgba(255,255,255,0.04);padding:4px;border-radius:4px}
-#viewer .overlay-ui{position:absolute;right:12px;top:12px;color:#cbd5e1}
-#status{padding:8px 12px;background:rgba(0,0,0,0.25);font-size:13px;color:var(--muted)}
-#upload-area{margin-top:12px;padding:12px;border:2px dashed rgba(255,255,255,0.03);text-align:center;border-radius:6px;color:var(--muted)}
-#actions{margin-top:10px}
-a#download-link{display:inline-block;padding:8px 12px;background:var(--accent);color:white;border-radius:6px;text-decoration:none}
-.hint{font-size:12px;color:var(--muted);margin-top:8px}
+.model-item{padding:10px;border-radius:8px;margin:8px 0;background:rgba(255,255,255,0.02);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.model-item:active{transform:scale(0.997)}
 
-@media(max-width:800px){aside#sidebar{width:100%;position:relative}#app{flex-direction:column}#viewer-wrap{height:60vh}}
-#status{padding:8px 12px;background:rgba(0,0,0,0.18);font-size:13px;color:var(--muted)}
+/* Viewer area */
+#viewer-wrap{flex:1;display:flex;flex-direction:column;position:relative}
+#viewer{flex:1;position:relative;height:calc(var(--vh,1vh) * 100);min-height:320px;background:#111}
+#status{position:absolute;left:12px;bottom:12px;background:rgba(0,0,0,0.4);padding:8px 10px;border-radius:8px;color:var(--muted);font-size:13px}
+#debug{position:fixed;right:12px;bottom:12px;background:rgba(0,0,0,0.35);padding:8px;border-radius:6px;font-size:12px;color:#cbd5e1;max-width:240px}
 
-/* controls panel layout */
+/* Controls */
 #controls-panel{display:flex;flex-direction:column;gap:8px}
 #controls-panel label{display:flex;align-items:center;gap:8px}
-#controls-panel button{padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.02);cursor:pointer}
-#controls-panel button:hover{background:rgba(255,255,255,0.04)}
+#controls-panel button,#cam-presets button{padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.02);cursor:pointer}
 
-/* mobile / touch improvements */
-#sidebar-toggle{display:none;position:fixed;left:12px;top:12px;z-index:50;padding:10px 12px;border-radius:6px;border:none;background:var(--panel);color:inherit;box-shadow:0 2px 8px rgba(0,0,0,0.4);cursor:pointer}
-#sidebar.show{transform:none}
-#sidebar{transition:transform .22s ease}
+/* Sidebar toggle for small screens */
+#sidebar-toggle{display:none;position:fixed;left:12px;top:12px;z-index:200;padding:10px;border-radius:8px;border:none;background:var(--panel);color:inherit;box-shadow:0 2px 8px rgba(0,0,0,0.4);cursor:pointer}
 
-@media(max-width:900px){
-	/* Portrait / narrow screens: stack the sidebar above viewer (relative), allow normal page scrolling */
-	#sidebar{position:relative;left:auto;top:auto;bottom:auto;transform:none;width:100%;max-width:none;z-index:20;padding:12px;overflow:visible}
-	#sidebar.open{transform:none}
-	#sidebar-toggle{display:block}
-	#app.sidebar-open{overflow:visible}
-	#viewer{margin-left:0}
-	#controls-panel{gap:10px}
-	#controls-panel button{padding:12px 14px;font-size:16px}
-}
-
-/* small devices in landscape: prefer a scrollable overlay or dock depending on device capability
-   - Use --vh (set from JS) and safe-area-inset to ensure correct height on iOS Safari
-   - For iPad-like devices we use an overlay panel with an explicit close button so the content can scroll
-   - For other small landscape devices we keep a docked panel but limit max-width so it doesn't cover everything */
-@media(max-width:900px) and (orientation:landscape){
-	#sidebar{
-		transform:translateX(0%);
-		position:fixed;
-		left:0;top:0;
-		/* Use safe area and calc'd viewport height to avoid iOS 100vh bugs */
-		bottom:env(safe-area-inset-bottom, 0);
-		height:calc(var(--vh,1vh) * 100 - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0));
-		box-shadow:0 2px 12px rgba(0,0,0,0.5);
-		overflow:auto;
-		-webkit-overflow-scrolling:touch;
-		background:linear-gradient(180deg, rgba(15,23,32,0.98), rgba(10,14,20,0.98));
-		padding-top:18px;
-		z-index:60;
-	}
-	/* On narrow landscape we'll treat the sidebar as an overlay that can be closed */
-	#sidebar.overlay{left:0;right:auto;width:360px;max-width:62vw;border-right:1px solid rgba(255,255,255,0.03);}
-	/* dock fallback: keeps a slim sidebar that doesn't cover too much */
-	#sidebar.docked{width:320px;max-width:40vw}
-	#sidebar.open{transform:translateX(0%)}
-	#sidebar-toggle{display:none}
-	#app{overflow:visible}
-	#viewer{margin-left:0}
-}
-
-/* alternate rule: devices with small height (landscape on tablets) */
-@media (max-height:520px) and (orientation:landscape){
-	#sidebar{transform:translateX(0%);position:fixed;left:0;top:0;bottom:0;height:calc(var(--vh,1vh) * 100 - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0));box-shadow:0 2px 12px rgba(0,0,0,0.5);overflow:auto;-webkit-overflow-scrolling:touch}
-	#sidebar.overlay{width:380px;max-width:66vw}
-	#sidebar.docked{width:320px;max-width:40vw}
-	#sidebar.open{transform:translateX(0%)}
-	#sidebar-toggle{display:none}
-	#app{overflow:visible}
-	#viewer{margin-left:0}
-}
-
-/* Close button for overlay mode */
-#sidebar .close-btn{position:absolute;right:8px;top:8px;border:none;background:transparent;color:inherit;padding:8px;border-radius:6px;cursor:pointer;font-size:16px}
-
-/* small top handle for overlay sheet on iPad */
-.sheet-handle{height:6px;width:48px;background:rgba(255,255,255,0.06);border-radius:6px;margin:8px auto 12px;}
-
-/* make scrollbars visible and touch friendly on iOS */
-#sidebar::-webkit-scrollbar{width:12px}
-#sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:8px;border:3px solid transparent;background-clip:padding-box}
-#sidebar::-webkit-scrollbar-track{background:transparent}
-
-
-@media(pointer:coarse){
-	#controls-panel button{padding:14px 16px}
-	.model-item{padding:12px 14px}
-		#sidebar, #viewer, #controls-panel, #model-list {
-			-webkit-overflow-scrolling: touch;
-			scroll-behavior: smooth;
-		}
-		#sidebar-toggle {
-			min-width: 48px;
-			min-height: 48px;
-			font-size: 22px;
-			touch-action: manipulation;
-		}
-		#controls-panel button, #cam-presets button {
-			min-width: 44px;
-			min-height: 44px;
-			font-size: 18px;
-			touch-action: manipulation;
-		}
-		.model-item {
-			min-height: 44px;
-			font-size: 17px;
-		}
-}
-
-/* iPad landscape: ensure sidebar overlay is easy to close and doesn't block viewer */
-@media (min-width: 768px) and (max-width: 1100px) and (orientation: landscape) {
-	#sidebar.overlay {
-		width: 380px;
-		max-width: 60vw;
-		box-shadow: 0 2px 16px rgba(0,0,0,0.6);
-		z-index: 100;
-	}
-	#sidebar .close-btn {
-		display: block;
-		position: absolute;
-		right: 12px;
-		top: 12px;
-		background: var(--panel);
-		color: #fff;
-		border: none;
-		padding: 10px 14px;
-		border-radius: 8px;
-		font-size: 20px;
-		cursor: pointer;
-		z-index: 101;
-	}
-}
-
-/* Tablet UI: floating bottom toolbar when app has .tablet-mode */
-#tablet-ui{display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:120;pointer-events:none}
+/* Tablet UI (hidden by default) */
+#tablet-ui{display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:220;pointer-events:none}
 #app.tablet-mode #tablet-ui{display:block;pointer-events:auto}
 #tablet-ui .tablet-row{display:flex;gap:8px;justify-content:space-between;margin-bottom:8px}
 #tablet-ui button,#tablet-ui select,#tablet-ui .button{flex:1;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.04);color:inherit;font-size:16px}
 #tablet-ui .button{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 
-@media (pointer:coarse) and (min-width:768px){
-	#tablet-ui button,#tablet-ui select,#tablet-ui .button{padding:14px 16px;font-size:18px;border-radius:12px}
+/* Sheet handle */
+.sheet-handle{height:6px;width:48px;background:rgba(255,255,255,0.06);border-radius:6px;margin:8px auto 12px}
+
+/* Responsive rules */
+@media(max-width:900px){
+  #sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-110%);transition:transform .22s ease;z-index:210;width:360px}
+  #sidebar.open{transform:translateX(0)}
+  #sidebar-toggle{display:block}
+  #app{overflow:hidden}
+  #viewer{height:calc(var(--vh,1vh) * 100)}
+}
+
+@media(pointer:coarse){
+  #controls-panel button{padding:14px 16px}
+  .model-item{padding:12px 14px}
+  #tablet-ui button,#tablet-ui select,#tablet-ui .button{padding:14px 16px;font-size:18px;border-radius:12px}
 }
