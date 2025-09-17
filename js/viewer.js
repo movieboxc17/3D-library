@@ -1,8 +1,8 @@
 // Minimal Three.js FBX viewer using ES modules
 // Use esm.sh which rewrites bare imports for the browser
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+import * as THREE from 'https://esm.sh/three@0.156.0';
+import { OrbitControls } from 'https://esm.sh/three@0.156.0/examples/jsm/controls/OrbitControls.js';
+import { FBXLoader } from 'https://esm.sh/three@0.156.0/examples/jsm/loaders/FBXLoader.js';
 
 const container = document.getElementById('viewer');
 const app = document.getElementById('app');
@@ -204,6 +204,13 @@ function injectSidebarClose(){
     }, 350);
   };
   sidebar.appendChild(btn);
+  // add a small handle bar to indicate draggable sheet on touch devices
+  if(!sidebar.querySelector('.sheet-handle')){
+    const handle = document.createElement('div');
+    handle.className = 'sheet-handle';
+    handle.setAttribute('aria-hidden','true');
+    sidebar.insertBefore(handle, sidebar.firstChild);
+  }
 }
 
 // Close sidebar on outside tap (overlay mode)
