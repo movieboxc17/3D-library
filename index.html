@@ -61,6 +61,21 @@
         <div id="viewer"></div>
   <div id="status"></div>
   <div id="debug" style="position:fixed;right:12px;bottom:12px;background:rgba(0,0,0,0.35);padding:8px;border-radius:6px;font-size:12px;color:#cbd5e1;max-width:240px"></div>
+        <!-- Tablet / iPad specific floating UI (shown only on tablet-mode) -->
+        <div id="tablet-ui" aria-hidden="true">
+          <div class="tablet-row">
+            <button id="tb-cam-front" aria-label="Front view">Front</button>
+            <button id="tb-cam-top" aria-label="Top view">Top</button>
+            <button id="tb-cam-right" aria-label="Right view">Right</button>
+            <button id="tb-cam-persp" aria-label="Perspective view">Persp</button>
+          </div>
+          <div class="tablet-row">
+            <button id="tb-wire-toggle" aria-pressed="false">Wire</button>
+            <select id="tb-shading" aria-label="Shading mode"><option value="lit">Lit</option><option value="solid">Solid</option></select>
+            <button id="tb-grid-toggle" aria-pressed="true">Grid</button>
+            <a id="tb-download" class="button" href="#" download>Download</a>
+          </div>
+        </div>
       </main>
     </div>
 
