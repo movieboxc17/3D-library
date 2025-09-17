@@ -12,6 +12,9 @@ const downloadLink = document.getElementById('download-link');
 const sidebar = document.getElementById('sidebar');
 const sidebarToggle = document.getElementById('sidebar-toggle');
 const debugEl = document.getElementById('debug');
+const tbModelModal = document.getElementById('tablet-model-modal');
+const modalModelList = document.getElementById('modal-model-list');
+const modalClose = document.getElementById('modal-close');
 
 let scene, camera, renderer, controls, loader;
 let currentModel = null;
@@ -134,6 +137,7 @@ async function fetchModels(){
 
 function renderModelList(list){
   listEl.innerHTML = '';
+  if(modalModelList) modalModelList.innerHTML = '';
   list.forEach(item=>{
     const div = document.createElement('div');
     div.className = 'model-item';
@@ -142,6 +146,11 @@ function renderModelList(list){
     div.appendChild(sizeSpan);
     div.addEventListener('click', ()=> loadModel(item.url, item.name));
     listEl.appendChild(div);
+    if(modalModelList){
+      const m = div.cloneNode(true);
+      m.addEventListener('click', ()=>{ loadModel(item.url, item.name); if(tbModelModal) tbModelModal.setAttribute('aria-hidden','true'); });
+      modalModelList.appendChild(m);
+    }
   });
 }
 
@@ -154,10 +163,17 @@ function isTablet(){
 function updateDeviceUI(){
   if(isTablet()){
     app.classList.add('tablet-mode');
-    if(sidebar) sidebar.classList.add('overlay');
+    if(sidebar){
+      sidebar.classList.add('overlay');
+      sidebar.classList.remove('open');
+      sidebar.setAttribute('aria-hidden','true');
+    }
   }else{
     app.classList.remove('tablet-mode');
-    if(sidebar) sidebar.classList.remove('overlay');
+    if(sidebar){
+      sidebar.classList.remove('overlay');
+      sidebar.setAttribute('aria-hidden','false');
+    }
   }
 }
 
@@ -207,6 +223,17 @@ function start(){
   initScene();
   loader = new FBXLoader();
   fetchModels();
+  if(modalClose) modalClose.addEventListener('click', ()=> tbModelModal && tbModelModal.setAttribute('aria-hidden','true'));
+  // add a small button in tablet UI to open modal (create if missing)
+  let openPicker = document.getElementById('tb-open-models');
+  if(!openPicker){
+    openPicker = document.createElement('button');
+    openPicker.id = 'tb-open-models';
+    openPicker.textContent = 'Models';
+    const row = document.querySelector('#tablet-ui .tablet-row');
+    if(row) row.insertBefore(openPicker, row.firstChild);
+  }
+  if(openPicker) openPicker.addEventListener('click', ()=> tbModelModal && tbModelModal.setAttribute('aria-hidden','false'));
   wireTabletButtons();
   updateDeviceUI();
   window.addEventListener('resize', ()=>{ onWindowResize(); updateDeviceUI(); });
