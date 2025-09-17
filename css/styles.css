@@ -99,4 +99,48 @@ a#download-link{display:inline-block;padding:8px 12px;background:var(--accent);c
 @media(pointer:coarse){
 	#controls-panel button{padding:14px 16px}
 	.model-item{padding:12px 14px}
+		#sidebar, #viewer, #controls-panel, #model-list {
+			-webkit-overflow-scrolling: touch;
+			scroll-behavior: smooth;
+		}
+		#sidebar-toggle {
+			min-width: 48px;
+			min-height: 48px;
+			font-size: 22px;
+			touch-action: manipulation;
+		}
+		#controls-panel button, #cam-presets button {
+			min-width: 44px;
+			min-height: 44px;
+			font-size: 18px;
+			touch-action: manipulation;
+		}
+		.model-item {
+			min-height: 44px;
+			font-size: 17px;
+		}
+}
+
+/* iPad landscape: ensure sidebar overlay is easy to close and doesn't block viewer */
+@media (min-width: 768px) and (max-width: 1100px) and (orientation: landscape) {
+	#sidebar.overlay {
+		width: 380px;
+		max-width: 60vw;
+		box-shadow: 0 2px 16px rgba(0,0,0,0.6);
+		z-index: 100;
+	}
+	#sidebar .close-btn {
+		display: block;
+		position: absolute;
+		right: 12px;
+		top: 12px;
+		background: var(--panel);
+		color: #fff;
+		border: none;
+		padding: 10px 14px;
+		border-radius: 8px;
+		font-size: 20px;
+		cursor: pointer;
+		z-index: 101;
+	}
 }
