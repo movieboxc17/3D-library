@@ -167,12 +167,53 @@ function updateDeviceUI(){
       sidebar.classList.add('overlay');
       sidebar.classList.remove('open');
       sidebar.setAttribute('aria-hidden','true');
+      sidebar.setAttribute('tabindex','-1');
+    }
+    if(sidebarToggle){
+      sidebarToggle.setAttribute('aria-hidden','true');
+      sidebarToggle.setAttribute('tabindex','-1');
+    }
+    // Hide all desktop controls
+    const controlsPanel = document.getElementById('controls-panel');
+    if(controlsPanel){
+      controlsPanel.setAttribute('aria-hidden','true');
+      controlsPanel.setAttribute('tabindex','-1');
+    }
+    const camPresets = document.getElementById('cam-presets');
+    if(camPresets){
+      camPresets.setAttribute('aria-hidden','true');
+      camPresets.setAttribute('tabindex','-1');
+    }
+    const actions = document.getElementById('actions');
+    if(actions){
+      actions.setAttribute('aria-hidden','true');
+      actions.setAttribute('tabindex','-1');
     }
   }else{
     app.classList.remove('tablet-mode');
     if(sidebar){
       sidebar.classList.remove('overlay');
       sidebar.setAttribute('aria-hidden','false');
+      sidebar.removeAttribute('tabindex');
+    }
+    if(sidebarToggle){
+      sidebarToggle.setAttribute('aria-hidden','false');
+      sidebarToggle.removeAttribute('tabindex');
+    }
+    const controlsPanel = document.getElementById('controls-panel');
+    if(controlsPanel){
+      controlsPanel.setAttribute('aria-hidden','false');
+      controlsPanel.removeAttribute('tabindex');
+    }
+    const camPresets = document.getElementById('cam-presets');
+    if(camPresets){
+      camPresets.setAttribute('aria-hidden','false');
+      camPresets.removeAttribute('tabindex');
+    }
+    const actions = document.getElementById('actions');
+    if(actions){
+      actions.setAttribute('aria-hidden','false');
+      actions.removeAttribute('tabindex');
     }
   }
 }
